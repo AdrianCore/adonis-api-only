@@ -1,6 +1,7 @@
 'use strict'
 
 const Project = use('App/Models/Project');
+const AuthorizationService = use('App/Services/AuthorizationService');
 
 class ProjectController {
     async index({ auth }){
@@ -23,12 +24,18 @@ class ProjectController {
         const user = await auth.getUser();
         const { id } = params;
         const project = await Project.find(id);
-        if(project.user_id != user.id){
-            return response.status(403).json({
-                mensaje: "No puedes eliminar un proyecto que no es tuyo"
-            })
-        }
+        AuthorizationService.verifyPermission(project, user);
         await project.delete();
+        return project;
+    }
+
+    async update({auth, params, request}){
+        const user = await auth.getUser();
+        const { id } = params;
+        const project = await Project.find(id);
+        AuthorizationService.verifyPermission(project, user);
+        project.merge(request.only('name'));
+        await project.save();
         return project;
     }
 
