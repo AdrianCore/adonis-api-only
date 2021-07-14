@@ -31,6 +31,10 @@ class User extends Model {
    *
    * @return {Object}
    */
+
+  projects(){
+    return this.hasMany('App/Models/Project')
+  }
   tokens () {
     return this.hasMany('App/Models/Token')
   }
