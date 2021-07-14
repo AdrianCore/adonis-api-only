@@ -10,12 +10,12 @@ class ProjectController {
 
     async create({ auth, request }){
         const user = await auth.getUser();
-        const { nombre } = request.all();
+        const { name } = request.all();
         const project = new Project();
         project.fill({
-            nombre
+            name
         });
-        await user.projects.save(project);
+        await user.projects().save(project);
         return project;
     }
 }
